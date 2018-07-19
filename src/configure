@@ -45,6 +45,7 @@ certdo=no
 hid_card_change=no
 factory_reset=no
 flash_override=""
+confirm_button=no
 # For emulation
 prefix=/usr/local
 exec_prefix='${prefix}'
@@ -101,6 +102,10 @@ for option; do
     factory_reset=yes ;;
   --disable-factory-reset)
     factory_reset=no ;;
+  --enable-confirm-button)
+    confirm_button=yes ;;
+  --disable-confirm-button)
+    confirm_button=no ;;
   --with-dfu)
     with_dfu=yes ;;
   --without-dfu)
@@ -149,6 +154,8 @@ Configuration:
 			   FST_01_00 (unreleased version with 8MHz XTAL)
   --enable-factory-reset
 			support life cycle management	[no]
+  --enable-confirm-button
+			support button to confirm requests [no]
   --enable-debug	debug with virtual COM port	[no]
   --enable-pinpad=cir
 			PIN entry support		[no]
@@ -313,8 +320,17 @@ else
   echo "Life cycle management is NOT supported"
 fi
 
+# --enable-confirm-button option
+if test "$confirm_button" = "yes"; then
+  CONFIRM_BUTTON_DEFINE="#define CONFIRM_BUTTON_SUPPORT 1"
+  echo "Confirm button is supported"
+else
+  CONFIRM_BUTTON_DEFINE="#undef CONFIRM_BUTTON_SUPPORT"
+  echo "Confirm button is NOT supported"
+fi
+
 ### !!! Replace following string of "FSIJ" to yours !!! ####
-SERIALNO="FSIJ-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
+SERIALNO="VIZ-$(sed -e 's%^[^/]*/%%' <../VERSION)-"
 
 SERIALNO_STR_LEN_DEFINE="#define SERIALNO_STR_LEN ${#SERIALNO}"
 
@@ -390,8 +406,8 @@ output_vendor_product_serial_strings () {
     echo "  'E', 0, 'M', 0, 'U', 0, 'L', 0,"
     echo "  'A', 0, 'T', 0, 'E', 0, 'D', 0,"
   else
-    echo "  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,"
-    echo "  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,"
+    echo "  '6', 0, '6', 0, '6', 0, '6', 0,"
+    echo "  '6', 0, '6', 0, '6', 0, '6', 0,"
   fi
   echo '};'
   echo
@@ -483,6 +499,7 @@ sed -e "s/@DEBUG_DEFINE@/$DEBUG_DEFINE/" \
     -e "s/@CERTDO_DEFINE@/$CERTDO_DEFINE/" \
     -e "s/@HID_CARD_CHANGE_DEFINE@/$HID_CARD_CHANGE_DEFINE/" \
     -e "s/@LIFE_CYCLE_MANAGEMENT_DEFINE@/$LIFE_CYCLE_MANAGEMENT_DEFINE/" \
+    -e "s/@CONFIRM_BUTTON_DEFINE@/$CONFIRM_BUTTON_DEFINE/" \
     -e "s/@SERIALNO_STR_LEN_DEFINE@/$SERIALNO_STR_LEN_DEFINE/" \
 	< config.h.in > config.h
 exit 0

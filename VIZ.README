@@ -1,0 +1,1 @@
+Build with `./configure --vidpid=6666:6666 --target=VIZ_GNUPG_TOKEN_01 --enable-factory-reset --enable-certdo --disable-sys1-compat --enable-confirm-button`

@@ -37,14 +37,11 @@ BY_ADMIN = 3
 def main(fileid, is_update, data, passwd):
     gnuk = None
     for (dev, config, intf) in gnuk_devices():
-        try:
-            gnuk = gnuk_token(dev, config, intf)
-            print("Device: %s" % dev.filename)
-            print("Configuration: %d" % config.value)
-            print("Interface: %d" % intf.interfaceNumber)
-            break
-        except:
-            pass
+        gnuk = gnuk_token(dev, config, intf)
+        print("Device: %s" % dev.filename)
+        print("Configuration: %d" % config.value)
+        print("Interface: %d" % intf.interfaceNumber)
+        break
     if gnuk.icc_get_status() == 2:
         raise ValueError("No ICC present")
     elif gnuk.icc_get_status() == 1:
